@@ -11,11 +11,6 @@ from app.classification import classify_task
 from fastapi.responses import HTMLResponse
 
 # --------------------------------------------------
-# Create DB tables
-# --------------------------------------------------
-Base.metadata.create_all(bind=engine)
-
-# --------------------------------------------------
 # FastAPI app
 # --------------------------------------------------
 app = FastAPI(
