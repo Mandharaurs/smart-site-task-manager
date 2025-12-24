@@ -5,8 +5,10 @@ backend/__pycache__/
 backend/.env
 backend/.pytest_cache/
 
-# Database
+# Database (DISABLE SQLITE COMPLETELY)
 *.db
+*.sqlite
+*.sqlite3
 
 # OS
 .DS_Store
