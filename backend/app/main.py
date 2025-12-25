@@ -1,3 +1,4 @@
+# main.py
 from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
@@ -5,10 +6,9 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from datetime import datetime
 
-from app.database import engine, get_db
-from app.models import Base, Task, TaskHistory
+from app.database import get_db
+from app.models import Task, TaskHistory
 from app.classification import classify_task
-from fastapi.responses import HTMLResponse
 
 # --------------------------------------------------
 # FastAPI app
@@ -24,7 +24,7 @@ app = FastAPI(
 # --------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # or your frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -43,14 +43,12 @@ class TaskCreate(BaseModel):
     due_date: Optional[datetime] = None
 
 class TaskUpdate(BaseModel):
-    text: Optional[str] = None
     description: Optional[str] = None
     category: Optional[str] = None
     priority: Optional[str] = None
     status: Optional[str] = None
     assigned_to: Optional[str] = None
     due_date: Optional[datetime] = None
-
 
 class TaskResponse(BaseModel):
     id: str
@@ -69,18 +67,17 @@ class TaskResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 # --------------------------------------------------
-# Constants (ADDED)
+# Constants
 # --------------------------------------------------
 ALLOWED_STATUS = {"pending", "in_progress", "completed"}
 ALLOWED_PRIORITY = {"high", "medium", "low"}
 
 # --------------------------------------------------
-# Health
+# Health Endpoints
 # --------------------------------------------------
 @app.get("/", tags=["Health"])
 def root():
     return {"message": "Smart Site Task Manager API"}
-
 
 @app.get("/health", tags=["Health"])
 def health():
@@ -100,9 +97,7 @@ def classify_only(task: TaskText):
 # --------------------------------------------------
 @app.post("/api/tasks", response_model=TaskResponse, tags=["Tasks"])
 def create_task(task: TaskCreate, db: Session = Depends(get_db)):
-    classification = classify_task(
-        f"{task.title} {task.description}"
-    )
+    classification = classify_task(f"{task.title} {task.description}")
 
     db_task = Task(
         title=task.title,
@@ -182,7 +177,6 @@ def update_task(task_id: str, data: TaskUpdate, db: Session = Depends(get_db)):
 
     if data.status and data.status not in ALLOWED_STATUS:
         raise HTTPException(status_code=400, detail="Invalid status")
-
     if data.priority and data.priority not in ALLOWED_PRIORITY:
         raise HTTPException(status_code=400, detail="Invalid priority")
 
@@ -262,7 +256,7 @@ def get_task_history(task_id: str, db: Session = Depends(get_db)):
     return history
 
 # --------------------------------------------------
-# Task Summary (ADDED)
+# Task Summary
 # --------------------------------------------------
 @app.get("/api/tasks/summary", tags=["Tasks"])
 def task_summary(db: Session = Depends(get_db)):
@@ -273,7 +267,7 @@ def task_summary(db: Session = Depends(get_db)):
     }
 
 # --------------------------------------------------
-# Search Tasks (ADDED)
+# Search Tasks
 # --------------------------------------------------
 @app.get("/api/tasks/search", response_model=List[TaskResponse], tags=["Tasks"])
 def search_tasks(
@@ -283,8 +277,8 @@ def search_tasks(
     return (
         db.query(Task)
         .filter(
-    (Task.title.ilike(f"%{q}%")) |
-    (Task.description.ilike(f"%{q}%"))
-)
+            (Task.title.ilike(f"%{q}%")) |
+            (Task.description.ilike(f"%{q}%"))
+        )
         .all()
     )
