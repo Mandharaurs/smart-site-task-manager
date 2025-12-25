@@ -1,14 +1,21 @@
 # Python
-backend/venv/
-backend/__pycache__/
+venv/
+__pycache__/
 *.pyc
-backend/.env
-backend/.pytest_cache/
+.pytest_cache/
 
-# Database (DISABLE SQLITE COMPLETELY)
+# Environment variables
+.env
+
+# Database (disable SQLite)
 *.db
 *.sqlite
 *.sqlite3
+
+# Frontend
+node_modules/
+dist/
+build/
 
 # OS
 .DS_Store

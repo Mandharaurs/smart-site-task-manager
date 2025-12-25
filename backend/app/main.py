@@ -5,6 +5,7 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from datetime import datetime
+from uuid import UUID
 
 from app.database import get_db
 from app.models import Task, TaskHistory
@@ -51,11 +52,11 @@ class TaskUpdate(BaseModel):
     due_date: Optional[datetime] = None
 
 class TaskResponse(BaseModel):
-    id: str
+    id: UUID   # ✅ FIX (was str)
     title: str
     description: str
-    category: str
-    priority: str
+    category: Optional[str]
+    priority: Optional[str]
     status: str
     assigned_to: Optional[str]
     due_date: Optional[datetime]
