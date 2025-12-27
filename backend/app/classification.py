@@ -1,4 +1,4 @@
-import re
+from app.nlp_utils import extract_entities
 
 CATEGORY_KEYWORDS = {
     "scheduling": ["meeting", "schedule", "call", "appointment", "deadline"],
@@ -20,46 +20,26 @@ SUGGESTED_ACTIONS = {
     "general": ["Review task", "Plan next steps"]
 }
 
-DATE_KEYWORDS = [
-    "today", "tomorrow",
-    "monday", "tuesday", "wednesday",
-    "thursday", "friday", "saturday", "sunday"
-]
 
 def classify_task(text: str):
     text_lower = text.lower()
 
-    # Category
+    # ---------- Category ----------
     category = "general"
     for cat, words in CATEGORY_KEYWORDS.items():
         if any(word in text_lower for word in words):
             category = cat
             break
 
-    # Priority
+    # ---------- Priority ----------
     priority = "low"
     for pri, words in PRIORITY_KEYWORDS.items():
         if any(word in text_lower for word in words):
             priority = pri
             break
 
-    # People extraction
-    people_pattern = r'(?:with|by|assign to)\s+([A-Za-z]+)'
-    people = re.findall(people_pattern, text_lower)
-
-    people = [p.strip() for match in people for p in match.split(",")]
-
-    # Dates extraction
-    dates = [word for word in DATE_KEYWORDS if word in text_lower]
-
-    # Actions extraction (optional, can add more verbs)
-    actions = re.findall(r'\b(schedule|call|review|approve|fix|check|update|conduct)\b', text_lower)
-
-    entities = {
-        "people": people,
-        "datetime": dates,
-        "actions": actions
-    }
+    # ---------- Entity Extraction (SINGLE SOURCE OF TRUTH) ----------
+    entities = extract_entities(text)
 
     return {
         "category": category,

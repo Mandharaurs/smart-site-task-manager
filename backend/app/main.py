@@ -158,6 +158,38 @@ def get_tasks(
     return query.offset(offset).limit(limit).all()
 
 # --------------------------------------------------
+# Task Summary
+# --------------------------------------------------
+@app.get("/api/tasks/summary", tags=["Tasks"])
+def task_summary(db: Session = Depends(get_db)):
+    pending = db.query(Task).filter(Task.status == "pending").count()
+    in_progress = db.query(Task).filter(Task.status == "in_progress").count()
+    completed = db.query(Task).filter(Task.status == "completed").count()
+    
+    return {
+        "pending": pending,
+        "in_progress": in_progress,
+        "completed": completed,
+    }
+
+# --------------------------------------------------
+# Search Tasks
+# --------------------------------------------------
+@app.get("/api/tasks/search", response_model=List[TaskResponse], tags=["Tasks"])
+def search_tasks(
+    q: str = Query(..., min_length=2),
+    db: Session = Depends(get_db)
+):
+    return (
+        db.query(Task)
+        .filter(
+            (Task.title.ilike(f"%{q}%")) |
+            (Task.description.ilike(f"%{q}%"))
+        )
+        .all()
+    )
+
+# --------------------------------------------------
 # Get Task by ID
 # --------------------------------------------------
 @app.get("/api/tasks/{task_id}", response_model=TaskResponse, tags=["Tasks"])
@@ -255,31 +287,3 @@ def get_task_history(task_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="No history found")
 
     return history
-
-# --------------------------------------------------
-# Task Summary
-# --------------------------------------------------
-@app.get("/api/tasks/summary", tags=["Tasks"])
-def task_summary(db: Session = Depends(get_db)):
-    return {
-        "pending": db.query(Task).filter(Task.status == "pending").count(),
-        "in_progress": db.query(Task).filter(Task.status == "in_progress").count(),
-        "completed": db.query(Task).filter(Task.status == "completed").count(),
-    }
-
-# --------------------------------------------------
-# Search Tasks
-# --------------------------------------------------
-@app.get("/api/tasks/search", response_model=List[TaskResponse], tags=["Tasks"])
-def search_tasks(
-    q: str = Query(..., min_length=2),
-    db: Session = Depends(get_db)
-):
-    return (
-        db.query(Task)
-        .filter(
-            (Task.title.ilike(f"%{q}%")) |
-            (Task.description.ilike(f"%{q}%"))
-        )
-        .all()
-    )
