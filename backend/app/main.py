@@ -193,7 +193,7 @@ def search_tasks(
 # Get Task by ID
 # --------------------------------------------------
 @app.get("/api/tasks/{task_id}", response_model=TaskResponse, tags=["Tasks"])
-def get_task(task_id: str, db: Session = Depends(get_db)):
+def get_task(task_id: UUID, db: Session = Depends(get_db)):
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -203,18 +203,29 @@ def get_task(task_id: str, db: Session = Depends(get_db)):
 # Update Task
 # --------------------------------------------------
 @app.patch("/api/tasks/{task_id}", response_model=TaskResponse, tags=["Tasks"])
-def update_task(task_id: str, data: TaskUpdate, db: Session = Depends(get_db)):
+def update_task(task_id: UUID, data: TaskUpdate, db: Session = Depends(get_db)):
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
 
+    # Validation
     if data.status and data.status not in ALLOWED_STATUS:
         raise HTTPException(status_code=400, detail="Invalid status")
-    if data.priority and data.priority not in ALLOWED_PRIORITY:
-        raise HTTPException(status_code=400, detail="Invalid priority")
 
+    # Prepare update data
+    update_data = data.model_dump(exclude_unset=True)
+
+    # 🚫 Block manual override of NLP fields
+    if "category" in update_data or "priority" in update_data:
+        raise HTTPException(
+            status_code=400,
+            detail="Category and priority are auto-generated"
+        )
+
+    # Snapshot before update
     old_value = {
-        "text": f"{task.title} {task.description}",
+        "title": task.title,
+        "description": task.description,
         "category": task.category,
         "priority": task.priority,
         "status": task.status,
@@ -222,17 +233,29 @@ def update_task(task_id: str, data: TaskUpdate, db: Session = Depends(get_db)):
         "due_date": str(task.due_date) if task.due_date else None
     }
 
-    for field, value in data.model_dump(exclude_unset=True).items():
+    # Apply updates
+    for field, value in update_data.items():
         setattr(task, field, value)
 
+    # 🔥 NLP RE-CLASSIFICATION (ONLY IF DESCRIPTION CHANGED)
+    if "description" in update_data:
+        classification = classify_task(f"{task.title} {task.description}")
+
+        task.category = classification["category"]
+        task.priority = classification["priority"]
+        task.extracted_entities = classification["extracted_entities"]
+        task.suggested_actions = classification["suggested_actions"]
+
+    # Save
     db.commit()
     db.refresh(task)
 
+    # History
     history = TaskHistory(
         task_id=task.id,
         action="updated",
         old_value=old_value,
-        new_value=data.model_dump(exclude_unset=True),
+        new_value=update_data,
         changed_by="system"
     )
 
@@ -245,7 +268,7 @@ def update_task(task_id: str, data: TaskUpdate, db: Session = Depends(get_db)):
 # Delete Task
 # --------------------------------------------------
 @app.delete("/api/tasks/{task_id}", tags=["Tasks"])
-def delete_task(task_id: str, db: Session = Depends(get_db)):
+def delete_task(task_id: UUID, db: Session = Depends(get_db)):
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -275,7 +298,7 @@ def delete_task(task_id: str, db: Session = Depends(get_db)):
 # Task History
 # --------------------------------------------------
 @app.get("/api/tasks/{task_id}/history", tags=["Tasks"])
-def get_task_history(task_id: str, db: Session = Depends(get_db)):
+def get_task_history(task_id: UUID, db: Session = Depends(get_db)):
     history = (
         db.query(TaskHistory)
         .filter(TaskHistory.task_id == task_id)
