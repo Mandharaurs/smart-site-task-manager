@@ -35,20 +35,28 @@ def extract_entities(text: str):
     # ---------- Dates ----------
     dates = []
     for pattern in DATE_PATTERNS:
-        matches = re.findall(pattern, text_lower)
-        dates.extend(matches)
+        dates.extend(re.findall(pattern, text_lower))
 
     # ---------- People ----------
     people = []
-    for pattern in PERSON_PATTERNS:
-        matches = re.findall(pattern, text)
-        people.extend(matches)
+    person_patterns = [
+        r"with\s+([a-zA-Z]+)",
+        r"by\s+([a-zA-Z]+)",
+        r"assign(?:ed)?\s+to\s+([a-zA-Z]+)"
+    ]
+
+    for pattern in person_patterns:
+        people.extend(re.findall(pattern, text_lower))
 
     # ---------- Locations ----------
     locations = []
-    for pattern in LOCATION_PATTERNS:
-        matches = re.findall(pattern, text)
-        locations.extend(matches)
+    location_patterns = [
+        r"\bat\s+([a-zA-Z]+)",
+        r"\bin\s+([a-zA-Z]+\s+office)"
+    ]
+
+    for pattern in location_patterns:
+        locations.extend(re.findall(pattern, text_lower))
 
     return {
         "people": list(set(people)),
