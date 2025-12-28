@@ -111,7 +111,7 @@ cd frontend
 flutter pub get
 flutter run
 
-##10. Future Improvements
+## 10. Future Improvements
 AI/LLM-based task classification
 Authentication and role management
 Real-time updates
