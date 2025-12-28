@@ -6,9 +6,12 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # Load environment variables
 load_dotenv()
 
+# ✅ TEMPORARY DEBUG CHECK (SAFE)
+print("Env loaded:", "DATABASE_URL" in os.environ)
+
 DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise RuntimeError("DATABASE_URL is required")
+if DATABASE_URL is None:
+    raise RuntimeError("DATABASE_URL is required but not set")
 
 engine = create_engine(
     DATABASE_URL,
@@ -23,7 +26,7 @@ Base = declarative_base()
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
-    bind=engine
+    bind=engine,
 )
 
 def get_db():
