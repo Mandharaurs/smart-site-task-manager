@@ -1,25 +1,28 @@
 class Task {
-  final String id; // ✅ UUID is STRING
+  final String id;
   final String title;
   final String description;
+  final String category;
   final String priority;
-  final String status;
+  final bool completed;
 
   Task({
     required this.id,
     required this.title,
     required this.description,
+    required this.category,
     required this.priority,
-    required this.status,
+    required this.completed,
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-      id: json["id"].toString(), // ✅ safe conversion
-      title: json["title"],
-      description: json["description"] ?? "",
-      priority: json["priority"],
-      status: json["status"],
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      category: json['category'],
+      priority: json['priority'],
+      completed: json['completed'] ?? false,
     );
   }
 }

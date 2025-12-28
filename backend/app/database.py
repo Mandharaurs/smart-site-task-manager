@@ -1,11 +1,10 @@
 import os
-from dotenv import load_dotenv   # ✅ add this
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-# ✅ MUST be called before os.getenv
+# Load environment variables
 load_dotenv()
-print("DATABASE_URL:", os.getenv("DATABASE_URL"))
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
