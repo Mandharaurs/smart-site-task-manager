@@ -114,7 +114,7 @@ flutter run
 ##10. Future Improvements
 AI/LLM-based task classification
 Authentication and role management
-Realtime updates
+Real-time updates
 Mobile notifications
 
 
