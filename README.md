@@ -59,24 +59,27 @@ smart-site-task-manager/
 ## 5. Backend Setup
 
 ### Step 1: Create virtual environment
--cd backend
--python -m venv venv
--venv\Scripts\activate
+- Navigate to backend folder:
+  - `cd backend`
+- Create virtual environment:
+  - `python -m venv venv`
+- Activate virtual environment:
+  - `venv\Scripts\activate`
 
-Step 2: Install dependencies
--pip install -r requirements.txt
+### Step 2: Install dependencies
+- `pip install -r requirements.txt`
 
-Step 3: Environment variables 
--Create a .env file inside the backend/ directory:
--DATABASE_URL=postgresql://postgres:<PASSWORD>@<HOST>:5432/postgres
--⚠️ Environment variables are required. Secrets are not committed.
+### Step 3: Environment variables 
+- Create a `.env` file inside the `backend/` directory:
+  - `DATABASE_URL=postgresql://postgres:<PASSWORD>@<HOST>:5432/postgres`
+- ⚠️ Environment variables are required. Secrets are not committed.
 
-Step 4: Run backend server
--uvicorn app.main:app --reload
--Open Swagger UI:
--http://127.0.0.1:8000/docs
--Open Swagger UI in Render:
--https://smart-site-task-manager-backend-62bj.onrender.com/docs
+### Step 4: Run backend server
+- `uvicorn app.main:app --reload`
+- Open Swagger UI locally:
+  - `http://127.0.0.1:8000/docs`
+- Open Swagger UI in Render:
+  - `https://smart-site-task-manager-backend-62bj.onrender.com/docs`
 
 
 ## 6. API Endpoints
@@ -89,35 +92,38 @@ DELETE	/api/tasks/{id}	Delete task
 
 
 ## 7. Classification Logic
--Category Rules:
--scheduling → meeting, schedule, call
--finance → invoice, payment
--technical → bug, error, fix
--safety → hazard, inspection
--general → default
+- Category Rules:
+  - scheduling → meeting, schedule, call
+  - finance → invoice, payment
+  - technical → bug, error, fix
+  - safety → hazard, inspection
+  - general → default
 
--Priority Rules:
--high → urgent, today, emergency
--medium → important, soon
--low → default
+- Priority Rules:
+  - high → urgent, today, emergency
+  - medium → important, soon
+  - low → default
+
 
 
 ## 8. Testing
--Run backend tests:
--pytest
+- Run backend tests:
+  - `pytest`
 
 
 ## 9. Frontend Setup (Flutter)
--cd frontend
--flutter pub get
--flutter run
+- Navigate to the frontend folder:
+  - `cd frontend`
+- Install dependencies:
+  - `flutter pub get`
+- Run the app:
+  - `flutter run`
 
 ## 10. Future Improvements
--AI/LLM-based task classification
--Authentication and role management
--Real-time updates
--Mobile notifications
-
+- AI/LLM-based task classification
+- Authentication and role management
+- Real-time updates
+- Mobile notifications
 
 
 
