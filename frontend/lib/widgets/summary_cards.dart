@@ -38,7 +38,7 @@ class SummaryCards extends StatelessWidget {
       width: 150,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10), // ✅ FIXED
+        color: color.withValues(alpha: 0.10), 
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(

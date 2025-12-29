@@ -6,7 +6,7 @@ class TaskProvider extends ChangeNotifier {
   List<Task> tasks = [];
   bool loading = false;
 
-  // 🔹 Fetch all tasks
+  // Fetch all tasks
   Future<void> fetchTasks() async {
     loading = true;
     notifyListeners();
@@ -21,7 +21,7 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 🔹 Create a new task
+  // Create a new task
   Future<void> createTask({
     required String title,
     required String description,
@@ -41,10 +41,6 @@ class TaskProvider extends ChangeNotifier {
       debugPrint("Create task error: $e");
     }
   }
-
-  // ===============================
-  // ✅ DASHBOARD GETTERS (FIX)
-  // ===============================
 
   /// Tasks that are NOT completed
   int get pendingCount {

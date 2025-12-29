@@ -13,13 +13,13 @@ class ApiClient {
       InterceptorsWrapper(
         onRequest: (req, handler) {
           if (kDebugMode) {
-            debugPrint("➡️ ${req.method} ${req.path}");
+            debugPrint(" ${req.method} ${req.path}");
           }
           return handler.next(req);
         },
         onError: (e, handler) {
           if (kDebugMode) {
-            debugPrint("❌ ${e.message}");
+            debugPrint(" ${e.message}");
           }
           return handler.next(e);
         },

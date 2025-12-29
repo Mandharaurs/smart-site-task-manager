@@ -1,4 +1,3 @@
-# main.py
 from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict
@@ -25,7 +24,7 @@ app = FastAPI(
 # --------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # or your frontend URL
+    allow_origins=["*"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,7 +51,7 @@ class TaskUpdate(BaseModel):
     due_date: Optional[datetime] = None
 
 class TaskResponse(BaseModel):
-    id: UUID   # ✅ FIX (was str)
+    id: UUID   
     title: str
     description: str
     category: Optional[str]
@@ -215,7 +214,7 @@ def update_task(task_id: UUID, data: TaskUpdate, db: Session = Depends(get_db)):
     # Prepare update data
     update_data = data.model_dump(exclude_unset=True)
 
-    # 🚫 Block manual override of NLP fields
+    # Block manual override of NLP fields
     if "category" in update_data or "priority" in update_data:
         raise HTTPException(
             status_code=400,
@@ -237,7 +236,7 @@ def update_task(task_id: UUID, data: TaskUpdate, db: Session = Depends(get_db)):
     for field, value in update_data.items():
         setattr(task, field, value)
 
-    # 🔥 NLP RE-CLASSIFICATION (ONLY IF DESCRIPTION CHANGED)
+    # NLP RE-CLASSIFICATION (ONLY IF DESCRIPTION CHANGED)
     if "description" in update_data:
         classification = classify_task(f"{task.title} {task.description}")
 
