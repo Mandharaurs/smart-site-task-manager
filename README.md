@@ -3,7 +3,6 @@
 A full-stack task management application that automatically classifies
 and prioritizes tasks based on content analysis.
 
----
 
 ## 1. Project Overview
 
@@ -60,22 +59,24 @@ smart-site-task-manager/
 ## 5. Backend Setup
 
 ### Step 1: Create virtual environment
-cd backend
-python -m venv venv
-venv\Scripts\activate
+-cd backend
+-python -m venv venv
+-venv\Scripts\activate
 
 Step 2: Install dependencies
-pip install -r requirements.txt
+-pip install -r requirements.txt
 
 Step 3: Environment variables 
-Create a .env file inside the backend/ directory:
-DATABASE_URL=postgresql://postgres:<PASSWORD>@<HOST>:5432/postgres
-⚠️ Environment variables are required. Secrets are not committed.
+-Create a .env file inside the backend/ directory:
+-DATABASE_URL=postgresql://postgres:<PASSWORD>@<HOST>:5432/postgres
+-⚠️ Environment variables are required. Secrets are not committed.
 
 Step 4: Run backend server
-uvicorn app.main:app --reload
-Open Swagger UI:
-👉 http://127.0.0.1:8000/docs
+-uvicorn app.main:app --reload
+-Open Swagger UI:
+-http://127.0.0.1:8000/docs
+-Open Swagger UI in Render:
+-https://smart-site-task-manager-backend-62bj.onrender.com/docs
 
 
 ## 6. API Endpoints
@@ -88,34 +89,34 @@ DELETE	/api/tasks/{id}	Delete task
 
 
 ## 7. Classification Logic
-Category Rules
-scheduling → meeting, schedule, call
-finance → invoice, payment
-technical → bug, error, fix
-safety → hazard, inspection
-general → default
+-Category Rules:
+-scheduling → meeting, schedule, call
+-finance → invoice, payment
+-technical → bug, error, fix
+-safety → hazard, inspection
+-general → default
 
-Priority Rules
-high → urgent, today, emergency
-medium → important, soon
-low → default
+-Priority Rules:
+-high → urgent, today, emergency
+-medium → important, soon
+-low → default
 
 
 ## 8. Testing
-Run backend tests:
-pytest
+-Run backend tests:
+-pytest
 
 
 ## 9. Frontend Setup (Flutter)
-cd frontend
-flutter pub get
-flutter run
+-cd frontend
+-flutter pub get
+-flutter run
 
 ## 10. Future Improvements
-AI/LLM-based task classification
-Authentication and role management
-Real-time updates
-Mobile notifications
+-AI/LLM-based task classification
+-Authentication and role management
+-Real-time updates
+-Mobile notifications
 
 
 
